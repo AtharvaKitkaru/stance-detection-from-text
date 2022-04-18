@@ -1,0 +1,34 @@
+context
+c = contextual
+cf = context-free
+
+target grouping
+a = agglomerative
+b = bertopic
+n = no grouping
+
+sklearn or tensorflow or utility or history
+u = utility
+s = sklearn
+n = neural network
+h = history
+
+model names
+gb = gradient boosting
+svc = support vector classifier
+rf = random forest
+lr = logistic regresssion
+knn = k-nearest neighbor
+dt = decision tree
+gnb = gaussian naive bayes
+d = dense
+l = lstm
+b = bi-lstm
+nc = nearest centroid
+gtr = generalized target representations
+w2v = word2vec
+
+
+
+
+e.g. cf-n-s-gb = context-free no-grouping sklearn gradient boosting classifier
