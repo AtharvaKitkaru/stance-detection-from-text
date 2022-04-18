@@ -502,15 +502,25 @@ export class App extends Component {
                         style={{
                           borderRadius: "1rem",
                           // backgroundColor: getRandomColor(),
-                          backgroundColor: "#555",
+                          backgroundColor: "#333",
                         }}
+                        // style={{
+                        //   borderRadius: "1rem",
+                        // background: `linear-gradient(to right, ${
+                        //   output.stance === "favor"
+                        //     ? "green"
+                        //     : output.stance === "against"
+                        //     ? "red"
+                        //     : "grey"
+                        // } ${output.confidence * 100}%, white)`,
+                        // }}
                       >
                         <div className="col-8">
                           {/* <p className="fw-bold fs-5">Model</p> */}
                           <span className="text-  ">{output.modelName}</span>
                         </div>
                         <div
-                          className="output__progressbar text-center"
+                          className="output__progressbar text-center d-"
                           // style={{
                           //   width: 200,
                           //   height: 200,
