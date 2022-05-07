@@ -5,6 +5,7 @@ import modelWorking from "./assets/images/ModelWorking.png";
 import axiosInstance from "./axios";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import voca from "voca";
+import _ from "lodash";
 
 // function getRandomColor() {
 //   var letters = "0123456789ABCDEF";
@@ -121,6 +122,55 @@ export class App extends Component {
       });
   };
 
+  getOverallStance = () => {
+    // majority -> confidence
+
+    const outputs = this.state.prediction["outputs"];
+    let count0 = 0;
+    let confidence0 = 0;
+    let count1 = 0;
+    let confidence1 = 0;
+    let count2 = 0;
+    let confidence2 = 0;
+
+    for (let i = 0; i < outputs.length; i++) {
+      const o = outputs[i];
+      if (o.stance === "against") {
+        count0++;
+        confidence0 += o.confidence * 100;
+      }
+      if (o.stance === "favor") {
+        count1++;
+        confidence1 += o.confidence * 100;
+      }
+      if (o.stance === "against") {
+        count2++;
+        confidence2 += o.confidence * 100;
+      }
+    }
+    const d = [count0, count1, count2];
+    const dconf = [confidence0, confidence1, confidence2];
+
+    const maxVal = _.max(d);
+    const index = d.indexOf(maxVal);
+
+    const maxValConf = _.max(dconf);
+    const indexConf = dconf.indexOf(maxValConf);
+
+    // 3-1-1, 3-2, 4-1, 5-0
+    if (maxVal === 3 || maxVal === 4 || maxVal === 5) {
+      if (index === 0) return "against";
+      if (index === 1) return "favor";
+      if (index === 2) return "neutral";
+    }
+    // 2-2-1
+    else {
+      if (indexConf === 0) return "against";
+      if (indexConf === 1) return "favor";
+      if (indexConf === 2) return "neutral";
+    }
+  };
+
   render() {
     return (
       <div
@@ -221,6 +271,7 @@ export class App extends Component {
                     model for you. "Manual" mode allows you to customize the
                     model parameters.
                   </p>
+                  {/* {this.state.mode === 'auto' && <small>The output in auto mode is calculated as by taking majority of the predicted stances. In case of a tie, we display stance having the maximum confidence.</small>} */}
                 </div>
 
                 {this.state.mode === "manual" && (
@@ -495,57 +546,131 @@ export class App extends Component {
                       </div>
                     </div>
                   ) : this.state.prediction ? (
-                    this.state.prediction["outputs"].map((output) => (
+                    <>
                       <div
-                        className="collaps bg- shadow-sm text-white mb-3 d-flex justify-content-between align-items-center p-3"
+                        className="collaps bg- shadow-sm text-white mb-2 d-flex justify-content-between align-items-center p-3"
                         id="predictionInfo"
                         style={{
                           borderRadius: "1rem",
                           // backgroundColor: getRandomColor(),
                           backgroundColor: "#333",
                         }}
-                        // style={{
-                        //   borderRadius: "1rem",
-                        // background: `linear-gradient(to right, ${
-                        //   output.stance === "favor"
-                        //     ? "green"
-                        //     : output.stance === "against"
-                        //     ? "red"
-                        //     : "grey"
-                        // } ${output.confidence * 100}%, white)`,
-                        // }}
                       >
                         <div className="col-8">
                           {/* <p className="fw-bold fs-5">Model</p> */}
-                          <span className="text-  ">{output.modelName}</span>
+                          <span className="text-  ">{`Overall stance`}</span>
                         </div>
-                        <div
-                          className="output__progressbar text-center d-"
-                          // style={{
-                          //   width: 200,
-                          //   height: 200,
-                          // }}
-                        >
-                          <CircularProgressbar
-                            className="w-50"
-                            value={output.confidence}
-                            maxValue={1}
-                            text={voca.capitalize(output.stance)}
-                            strokeWidth={12}
-                            styles={buildStyles({
-                              textSize: ".7rem",
-                              textColor: "white",
-                              pathColor:
-                                output.stance === "favor"
-                                  ? "green"
-                                  : output.stance === "against"
-                                  ? "red"
-                                  : "grey",
-                            })}
-                          />
+                        <div className="output__progressbar text-center d-">
+                          {voca.capitalize(this.getOverallStance())}
                         </div>
                       </div>
-                    ))
+
+                      <div className="accordion my-3" id="automodeoutputs">
+                        <div className="accordion-item">
+                          <h2 className="accordion-header">
+                            <button
+                            className="accordion-button"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#howoutputispredicted"
+                            >
+                              How the output is predicted?
+                            </button>
+                          </h2>
+                          <div
+                            id="howoutputispredicted"
+                            className="accordion-collapse collapse show"
+                            data-bs-parent="#automodeoutputs"
+                          >
+                            <div className="accordion-body">
+                              <p>
+                                The output in auto mode is calculated as by
+                                taking majority of the predicted stances. In
+                                case of a tie, we display stance having the
+                                maximum confidence.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="accordion-item">
+                          <h2 className="accordion-header">
+                            <button
+                            className="accordion-button collapsed"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#individualmodelspredictions"
+                            >
+                              Individual models' prediction
+                            </button>
+                          </h2>
+                          <div
+                            id="individualmodelspredictions"
+                            className="accordion-collapse collapse"
+                            data-bs-parent="#automodeoutputs"
+                          >
+                            <div className="accordion-body">
+                              <div className="" id="individual__predicitions">
+                                {this.state.prediction["outputs"].map(
+                                  (output) => (
+                                    <div
+                                      className="collaps bg- shadow-sm text-white mb-3 d-flex justify-content-between align-items-center p-3"
+                                      id="predictionInfo"
+                                      style={{
+                                        borderRadius: "1rem",
+                                        // backgroundColor: getRandomColor(),
+                                        backgroundColor: "#333",
+                                      }}
+                                      // style={{
+                                      //   borderRadius: "1rem",
+                                      // background: `linear-gradient(to right, ${
+                                      //   output.stance === "favor"
+                                      //     ? "green"
+                                      //     : output.stance === "against"
+                                      //     ? "red"
+                                      //     : "grey"
+                                      // } ${output.confidence * 100}%, white)`,
+                                      // }}
+                                    >
+                                      <div className="col-8">
+                                        {/* <p className="fw-bold fs-5">Model</p> */}
+                                        <span className="text-  ">
+                                          {output.modelName}
+                                        </span>
+                                      </div>
+                                      <div
+                                        className="output__progressbar text-center d-"
+                                        // style={{
+                                        //   width: 200,
+                                        //   height: 200,
+                                        // }}
+                                      >
+                                        <CircularProgressbar
+                                          className="w-50"
+                                          value={output.confidence}
+                                          maxValue={1}
+                                          text={voca.capitalize(output.stance)}
+                                          strokeWidth={12}
+                                          styles={buildStyles({
+                                            textSize: ".7rem",
+                                            textColor: "white",
+                                            pathColor:
+                                              output.stance === "favor"
+                                                ? "green"
+                                                : output.stance === "against"
+                                                ? "red"
+                                                : "grey",
+                                          })}
+                                        />
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
                   ) : null}
 
                   <div className="d-flex justify-content-between mb-3">
