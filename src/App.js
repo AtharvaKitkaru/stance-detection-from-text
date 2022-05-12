@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import { toast } from "react-toastify";
-import trainingDataset from "./assets/images/TrainingDataset.png";
-import modelWorking from "./assets/images/ModelWorking.png";
-import axiosInstance from "./axios";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import voca from "voca";
 import _ from "lodash";
+import React, { Component } from "react";
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
+import { toast } from "react-toastify";
+import voca from "voca";
+import modelWorking from "./assets/images/ModelWorking.png";
+import trainingDataset from "./assets/images/TrainingDataset.png";
+import axiosInstance from "./axios";
 
 // function getRandomColor() {
 //   var letters = "0123456789ABCDEF";
@@ -143,7 +143,7 @@ export class App extends Component {
         count1++;
         confidence1 += o.confidence * 100;
       }
-      if (o.stance === "against") {
+      if (o.stance === "neutral") {
         count2++;
         confidence2 += o.confidence * 100;
       }
@@ -569,7 +569,7 @@ export class App extends Component {
                         <div className="accordion-item">
                           <h2 className="accordion-header">
                             <button
-                            className="accordion-button"
+                              className="accordion-button"
                               type="button"
                               data-bs-toggle="collapse"
                               data-bs-target="#howoutputispredicted"
@@ -595,7 +595,7 @@ export class App extends Component {
                         <div className="accordion-item">
                           <h2 className="accordion-header">
                             <button
-                            className="accordion-button collapsed"
+                              className="accordion-button collapsed"
                               type="button"
                               data-bs-toggle="collapse"
                               data-bs-target="#individualmodelspredictions"
