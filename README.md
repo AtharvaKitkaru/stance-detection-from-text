@@ -1,6 +1,7 @@
 # Stance Detection from Text
 
 ## Problem statement
+
 Introduction of social media platforms has allowed people to express their opinions freely on variety of topics. Some topics tend to be controversial and garners a spectrum of opinions.
 Understanding the stance of people on these topics and messages becomes crucial to understand the general opinion of public which can be used for further studies and analysis.
 Our project aims at implementing a platform that allows for the detection of stance from text. ​
